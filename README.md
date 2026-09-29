@@ -39,7 +39,6 @@ Sistema de gerenciamento de biblioteca desenvolvido como projeto da disciplina d
 
 | Entidade | Atributos |
 |---|---|
-| **Bibliotecário** | `bibliotecarioId`, `bibliotecarioNome`, `emprestimoId` |
 | **Leitor** | `leitorId`, `leitorNome`, `livroId`, `emprestimoId` |
 | **Livro** | `ID`, `Título`, `Autor`, `Tema`, `Situação`, `Data de Empréstimo` (obrigatório se `Situação` = "emprestado") |
 | **Empréstimo** | `emprestimoId`, `leitorId`, `livroId` |
@@ -49,15 +48,15 @@ Sistema de gerenciamento de biblioteca desenvolvido como projeto da disciplina d
 ```
  Leitor
     │
-    │  1:N  →  Empréstimo
+    │  1:N
     │
     ▼
-  Livro
+  Empréstimo
     │
-    │  N:1  →  Empréstimo
+    │  N:N
     │
     ▼
- Bibliotecário
+ Livro
 ```
 
 - Um **Leitor** pode realizar vários **Empréstimos** (1:N).

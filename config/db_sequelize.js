@@ -10,4 +10,26 @@ const sequelize = new Sequelize(
   }
 );
 
-module.exports = sequelize;
+const db_sequelize = {}
+
+db_sequelize.Sequelize = Sequelize;
+db_sequelize.sequelize = sequelize;
+
+db_sequelize.Leitor = require('../models/Livro.js')(sequelize, Sequelize);
+db_sequelize.Emprestimo = require('../models/Emprestimo.js')(sequelize, Sequelize);
+db_sequelize.Livro = require('../models/Livro.js')(sequelize, Sequelize);
+
+db_sequelize.Leitor.hasMany(db_sequelize.Emprestimo);
+db_sequelize.Emprestimo.belongsTo(db_sequelize.Leitor);
+
+db_sequelize.Emprestimo.belongsToMany(
+  db_sequelize.Livro,
+  {through: 'livroEmprestado'} 
+)
+
+db_sequelize.Livro.belongsToMany(
+  db_sequelize.Emprestimo,
+  {through: 'livroEmprestado'} 
+)
+
+module.exports = db_sequelize;

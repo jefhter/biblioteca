@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="/css">
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastrar Livro</h2>
+    <form action="/livro" method="POST">
+      <div class="form-group">
+        <label for="titulo">Titulo</label>
+        <input type="text" id="titulo" name="titulo" required>
+      </div>
+      <div class="form-group">
+        <label for="autor">Autor</label>
+        <input type="autor" id="autor" name="autor" required>
+      </div>
+      <div class="form-group">
+        <label for="tema">Tema</label>
+        <input type="tema" id="tema" name="tema" required>
+      </div>
+      <div class="form-group">
+        <input type="hidden" name="emprestado" value="false">
+        <input type="checkbox" id="emprestado" name="emprestado" value="true">
+        <label for="emprestado">Esta emprestado?</label>
+      </div>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+</body>
+</html>
