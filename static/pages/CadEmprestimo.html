@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="/css">
+</head>
+<body>
+  <div class="container">
+    <h2>Cadastrar Emprestimo</h2>
+    <form action="/emprestimo" method="POST">
+      <div class="form-group">
+        <label for="livroId">Id do livro</label>
+        <input type="number" id="livroId" name="livroId" required>
+      </div>
+      <div class="form-group">
+        <label for="leitorId">Id do Leitor</label>
+        <input type="number" id="leitorId" name="leitorId" required>
+      </div>
+      <div class="form-group">
+        <label for="dataEmprestimo">Data do Emprestimo</label>
+        <input type="date" id="dataEmprestimo" name="dataEmprestimo" required>
+      </div>
+      <div class="form-group">
+        <label for="dataDevolucao">Data da Devolução</label>
+        <input type="date" id="dataDevolucao" name="dataDevolucao" required>
+      </div>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+</body>
+</html>

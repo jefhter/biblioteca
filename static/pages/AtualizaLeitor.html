@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atualizacao</title>
+  <link rel="stylesheet" href="/css">
+</head>
+<body>
+  <div class="container">
+    <h2>Atualizar Nome de Leitor</h2>
+    <form action="/atualizar-leitor/" method="POST">
+      <div class="form-group">
+        <label for="leitorId">Id do Leitor</label>
+        <input type="number" id="leitorId" name="leitorId" required>
+      </div>
+      <div class="form-group">
+        <label for="nome">Nome</label>
+        <input type="text" id="nome" name="nome" required>
+      </div>
+      <button type="submit">Atualizar</button>
+    </form>
+  </div>
+</body>
+</html>

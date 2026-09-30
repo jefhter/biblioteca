@@ -1,20 +1,25 @@
-const db_mongoose = require('./config/db_mongoose');
 const db_sequelize = require('./config/db_sequelize');
+const { Op } = require('sequelize');
+
+const db_mongoose = require('./config/db_mongoose');
 const mongoose = require('mongoose');
-const Livro = require('./models/Livro');
+const Avaliacao = require('./models/Avaliacoes');
+
+const dns = require('node:dns');
+dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 const express = require('express');
 const path = require('path');
 
 const app = express();
 
-db_sequelize.sequelize.sync({ force: true }).then(() => {
-  console.log('{ force: true }');
-});
+// db_sequelize.sequelize.sync({ force: true }).then(() => {
+//   console.log('{ force: true }');
+// });
 
-// mongoose.connect(db_mongoose.connection)
-//   .then(() => console.log('Mongo conectado'))
-//   .catch((err) => console.log('>>>> ERRO: ', err));
+mongoose.connect(db_mongoose.connection)
+  .then(() => console.log('Mongo conectado'))
+  .catch((err) => console.log('>>>> ERRO: ', err));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -23,17 +28,14 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '/index.html'));
 });
 
-/*===========
-
- ROTAS LIVRO
-
-============*/
-
-app.get('/livro', (req, res) => {
-  res.sendFile(path.join(__dirname, '/pages/livro.html'));
-});
+/*=========== ROTAS LIVRO ============*/
 
 // create
+
+app.get('/cadastrar-livro', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/CadLivro.html'));
+});
+
 app.post('/livro/', (req, res) => { 
     (async () => {
         db_sequelize.Livro.create({
@@ -42,94 +44,141 @@ app.post('/livro/', (req, res) => {
             tema: req.body.tema,
             emprestado: (req.body.emprestado.length == 2) ? req.body.emprestado[1] : req.body.emprestado
         });
-        res.send('Livro cadastrada');
+        res.send('Livro cadastrado');
     })();
 });
 
 //update
-app.put('/livro/:id/:emprestado', (req, res) => {
+app.get('/atualizar-livro', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/AtualizaLivro.html'));
+});
+
+app.post('/atualizar-livro/', (req, res) => {
     (async () => {
-        const livro = await db_sequelize.Livro.findByPk(req.params.id);
-        livro.emprestado = req.params.emprestado;
-        const update = await livro.save();
-        console.log(update);
+        const livro = await db_sequelize.Livro.findByPk(req.body.livroId);
+        livro.emprestado = req.body.emprestado;
+        await livro.save();
+        res.send('Livro atualizado');
     })();
 });
 
 //search
-app.get('/livro/:id', (req, res) => {
+
+app.get('/buscar-livro', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/BuscaLivro.html'));
+});
+
+app.post('/buscar-livros', (req, res) => {
     (async () => {
-        const livro = db_sequelize.Livro.findByPk(req.params.id);
-        res.json(livro);
+        if (!req.body.livroId && !req.body.titulo){
+            return res.send('Preencha um ID ou um Título para buscar por livros!');
+        }
+        if (req.body.livroId) {
+            const livro = await db_sequelize.Livro.findByPk(parseInt(req.body.livroId));
+            return res.json(livro);
+        }
+        else if (req.body.titulo) {
+            const livros = await db_sequelize.Livro.findAll({
+                where: { titulo: { [Op.iLike]: `%${req.body.titulo}%` } }
+            });
+            return res.json(livros);
+        } 
     })();
 });
 
 //delete
-app.delete('/livro/:id', (req, res) => {
+
+app.get('/deletar-livro', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/DeletaLivro.html'));
+});
+
+app.post('/deletar-livro', (req, res) => {
     (async () => {
-        const livro = await db_sequelize.Livro.findByPk(req.params.id);
+        const livro = await db_sequelize.Livro.findByPk(parseInt(req.body.livroId));
         livro.destroy();
+        res.send('Exclusao finalizada.');
     })();
 });
 
-/*============
-
- ROTAS LEITOR
-
-============*/
-
-app.get('/leitor', (req, res) => {
-  res.sendFile(path.join(__dirname, '/pages/leitor.html'));
-});
+/*============ ROTAS LEITOR ============*/
 
 // create
+
+app.get('/cadastrar-leitor', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/CadLeitor.html'));
+});
+
 app.post('/leitor/', (req, res) => {
     (async () => {
         db_sequelize.Leitor.create({
             nome: req.body.nome
         });
-        res.send('Livro cadastrada');
+        res.send('Leitor cadastrado(a)');
     })();
 });
 
 // update
-app.put('/leitor/:id/:nome', (req, res) => {
+
+app.get('/atualizar-leitor', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/AtualizaLeitor.html'));
+});
+
+app.post('/atualizar-leitor/', (req, res) => {
     (async () => {
-        const leitor = await db_sequelize.Leitor.findByPk(req.params.id);
-        leitor.nome = req.params.nome;
-        const update = await leitor.save();
-        console.log(update);
+        const leitor = await db_sequelize.Leitor.findByPk(req.body.leitorId);
+        leitor.nome = req.body.nome;
+        await leitor.save();
+        res.send('Leitor atualiado(a)');
     })();
 });
 
 // search
-app.get('/leitor/:id', (req, res) => {
+
+app.get('/buscar-leitor', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/BuscaLeitor.html'));
+});
+
+app.post('/buscar-leitores', (req, res) => {
     (async () => {
-        const leitor = db_sequelize.Leitor.findByPk(req.params.id);
-        res.json(leitor);
+        if (!req.body.leitorId && !req.body.nome){
+            return res.send('Preencha um ID ou um Título para buscar por leitores!');
+        }
+        if (req.body.leitorId) {
+            const leitor = await db_sequelize.Leitor.findByPk(parseInt(req.body.leitorId));
+            return res.json(leitor);
+        }
+        else if (req.body.nome) {
+            const leitores = await db_sequelize.Leitor.findAll({
+                where: { nome: { [Op.iLike]: `%${req.body.nome}%` } }
+            });
+            return res.json(leitores);
+        } 
     })();
 });
 
 // delete
-app.delete('/leitor/:id', (req, res) => {
+
+app.get('/deletar-leitor/', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/DeletaLeitor.html'));
+});
+
+app.post('/deletar-leitor', (req, res) => {
     (async () => {
-        const leitor = await db_sequelize.Leitor.findByPk(req.params.id);
-        leitor.destroy();
+        const livro = await db_sequelize.Leitor.findByPk(parseInt(req.body.leitorId));
+        livro.destroy();
+        res.send('Exclusao finalizada.');
     })();
 });
 
 
-/*================
-
- ROTAS EMPRESTIMO
-
-================*/
-
-app.get('/emprestimo', (req, res) => {
-  res.sendFile(path.join(__dirname, '/pages/emprestimo.html'));
-});
+/*================ ROTAS EMPRESTIMO ================*/
 
 // create
+
+app.get('/cadastrar-emprestimo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/CadEmprestimo.html'));
+});
+
 app.post('/emprestimo/', (req, res) => {
     db_sequelize.Emprestimo.create({
         livroId: req.body.livroId,
@@ -137,73 +186,100 @@ app.post('/emprestimo/', (req, res) => {
         dataEmprestimo: req.body.dataEmprestimo,
         dataDevolucao: req.body.dataDevolucao
     });
-    res.send('Livro cadastrada');
+    res.send('Emprestimo cadastrado');
 });
 
 // update
-app.put('/emprestimo/:id/:dataDevolucao', (req, res) => {
+
+app.get('/atualizar-emprestimo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/AtualizaEmprestimo.html'));
+});
+
+app.post('/atualizar-emprestimo/', (req, res) => {
     (async () => {
-        const emprestimo = await db_sequelize.Emprestimo.findByPk(req.params.id);
-        emprestimo.dataDevolucao = req.params.dataDevolucao;
+        const emprestimo = await db_sequelize.Emprestimo.findByPk(req.body.emprestimoId);
+        emprestimo.dataDevolucao = req.body.dataDevolucao;
         const update = await emprestimo.save();
         res.json(update);
     })();
 });
 
 // search
-app.get('/emprestimo/:id', (req, res) => {
+
+app.get('/buscar-emprestimo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/BuscaEmprestimo.html'));
+});
+
+app.post('/buscar-emprestimos', (req, res) => {
     (async () => {
-        const emprestimo = db_sequelize.Emprestimo.findByPk(req.params.id);
-        res.json(emprestimo);
+        if (!req.body.emprestimoId){
+            const emprestimos = await db_sequelize.Emprestimo.findAll();
+            return res.json(emprestimos);
+        }
+        else if (req.body.emprestimoId) {
+            const emprestimo = await db_sequelize.Emprestimo.findByPk(parseInt(req.body.emprestimoId));
+            return res.json(emprestimo);
+        }
     })();
 });
 
 // delete
-app.delete('/emprestimo/:id', (req, res) => {
+
+app.get('/deletar-emprestimo', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/DeletaEmprestimo.html'));
+});
+
+app.post('/deletar-emprestimo', (req, res) => {
     (async () => {
-        const emprestimo = await db_sequelize.Emprestimo.findByPk(req.params.id);
-        emprestimo.destroy();
+        const livro = await db_sequelize.Emprestimo.findByPk(parseInt(req.body.emprestimoId));
+        livro.destroy();
+        res.send('Exclusao finalizada.');
     })();
 });
 
-/*=================
+/*================= ROTAS AVALIACOES =================*/
 
- ROTAS AVALIACOES
+// create
 
-=================*/
+app.get('/avalie', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/pages/CadAvaliacao.html'));
+});
 
-// app.get('/avaliacoes', (req, res) => {
-//   res.sendFile(path.join(__dirname, '/pages/avaliacoes.html'));
-// });
+app.post('/avaliacao', (req, res) => {
+    (async () => {
+        new Avaliacao({
+            livroId: req.body.livroId,
+            avaliacoes:[{
+                usuario: req.body.usuario,
+                comentario: req.body.comentario,
+                data: new Date()
+            }]
+        }).save().then(() => {
+            return res.send('Obrigado por sua avaliação!');
+        }).catch((err) => {
+            console.log(err);
+        });
+    })();
+});
 
-// // create
-// app.post('/avaliacoes/', (req, res) => {
-//   res.sendFile(path.join(__dirname, '/pages/avaliacoes.html'));
-// });
+// search
+app.get('/ver-avaliacoes', (req, res) => {
+    res.sendFile(path.join(__dirname, '/static/pages/BuscaAvaliacao.html'));
+});
 
-// // update
-// app.put('/avaliacoes::', (req, res) => {
-//   res.sendFile(path.join(__dirname, '/pages/avaliacoes.html'));
-// });
+app.post('/avaliacoes/', (req, res) => {
+    (async () => {
+        const avaliacao = await Avaliacao.find({
+            livroId: req.body.livroId
+        });
+        return res.json(avaliacao);
+    })();
+});
 
-// // search
-// app.get('/avaliacoes/:id', (req, res) => {
-//     if(req.params.id == null){
-//         (async () => {
-//             const avaliacoes = db_sequelize.Avaliacao.findAll();
-//             res.json(avaliacoes);
-//         })();
-//     } else{
-//         (async () => {
-//             const avaliacao = db_sequelize.Avaliacao.findByPk(req.params.id);
-//             res.json(avaliacao);
-//         })();
-//     }
-// });
+/*================ ROTA CSS ================*/
 
-// // delete
-// app.delete('/avaliacoes=', (req, res) => {
-//   res.sendFile(path.join(__dirname, '/pages/avaliacoes.html'));
-// });
+app.get('/css', (req, res) => {
+  res.sendFile(path.join(__dirname, '/static/css/style.css'));
+});
 
 app.listen(8081, () => console.log(`Servidor rodando na porta 8081`));

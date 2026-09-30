@@ -15,7 +15,7 @@ const db_sequelize = {}
 db_sequelize.Sequelize = Sequelize;
 db_sequelize.sequelize = sequelize;
 
-db_sequelize.Leitor = require('../models/Livro.js')(sequelize, Sequelize);
+db_sequelize.Leitor = require('../models/Leitor.js')(sequelize, Sequelize);
 db_sequelize.Emprestimo = require('../models/Emprestimo.js')(sequelize, Sequelize);
 db_sequelize.Livro = require('../models/Livro.js')(sequelize, Sequelize);
 

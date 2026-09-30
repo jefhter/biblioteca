@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Atualização</title>
+  <link rel="stylesheet" href="/css">
+</head>
+<body>
+  <div class="container">
+    <h2>Atualizar Emprestimo</h2>
+    <form action="/atualizar-emprestimo/" method="POST">
+      <div class="form-group">
+        <label for="emprestimoId">Id do Emprestimo</label>
+        <input type="number" id="emprestimoId" name="emprestimoId" required>
+      </div>
+      <div class="form-group">
+        <label for="dataDevolucao">Data da Devolução</label>
+        <input type="date" id="dataDevolucao" name="dataDevolucao" required>
+      </div>
+      <button type="submit">Atualizar</button>
+    </form>
+  </div>
+</body>
+</html>
