@@ -276,6 +276,43 @@ app.post('/avaliacoes/', (req, res) => {
     })();
 });
 
+// update
+app.get('/atualizar-avaliacoes', (req, res) => {
+    res.sendFile(path.join(__dirname, '/static/pages/AtualizaAvaliacao.html'));
+});
+
+/* NAO ESTA FUNCIONANDO
+app.post('/atualizar-avaliacao', (req, res) => {
+    (async () => {
+        const avaliacao = await Avaliacao.findOneAndUpdate({
+            livroId: req.body.livroId,
+            avaliacoes:[{
+                _id: req.body.avaliacaoId,
+                comentario: req.body.comentario,
+                data: new Date()
+            }]
+        })
+    })();
+});
+*/
+
+// delete
+
+app.get('/deletar-avaliacoes', (req, res) => {
+    res.sendFile(path.join(__dirname, '/static/pages/DeletaAvaliacao.html'));
+});
+
+/* NAO ESTA FUNCIONANDO
+app.post('/deletar-avaliacao', (req, res) => {
+    (async () => {
+        const avaliacao = await Avaliacao.findOneAndDelete({
+            _id: req.body.avaliacaoId,
+            livroId: req.body.livroId,
+        })
+    })();
+});
+*/
+
 /*================ ROTA CSS ================*/
 
 app.get('/css', (req, res) => {

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliacoes</title>
+  <link rel="stylesheet" href="/css">
+</head>
+<body>
+  <div class="container">
+    <h2>Edicao de avaliacao</h2>
+    <form action="/atualizar-avaliacao" method="POST">
+      <div class="form-group">
+        <label for="livroId">ID do livro</label>
+        <input type="text" id="livroId" name="livroId">
+      </div>
+      <div class="form-group">
+        <label for="avaliacaoId">ID da avaliacao</label>
+        <input type="text" id="avaliacaoId" name="avaliacaoId">
+      </div>
+      <div class="form-group">
+        <label for="autor">Comentario</label>
+        <input type="text" id="comentario" name="comentario" required>
+      </div>
+      <button type="submit">Incluir</button>
+    </form>
+  </div>
+</body>
+</html>
