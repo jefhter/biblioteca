@@ -56,7 +56,7 @@ app.get('/atualizar-livro', (req, res) => {
 app.post('/atualizar-livro/', (req, res) => {
     (async () => {
         const livro = await db_sequelize.Livro.findByPk(req.body.livroId);
-        livro.emprestado = req.body.emprestado;
+        livro.emprestado = (req.body.emprestado.length == 2) ? req.body.emprestado[1] : req.body.emprestado[0];
         await livro.save();
         res.send('Livro atualizado');
     })();
